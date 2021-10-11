@@ -1,0 +1,57 @@
+---
+
+
+AWSTemplateFormatVersion: 2010-09-09
+
+
+Description: DNS records for webfont distribution
+
+
+Parameters:
+
+   ContentCodename:
+      Description: Codename for the type of content published with the distribution.
+      Type: String
+
+   DistributionDomainName:
+      Description: Domain name of the CloudFront distribution to which to point DNS records.
+      Type: String
+
+   HostedZoneId:
+      Description: ID of the Route 53 hosted zone in which to create DNS records.
+      Type: AWS::Route53::HostedZone::Id
+
+   RootDomain:
+      Description: Root domain.
+      Type: String
+      AllowedPattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
+      ConstraintDescription: must abide by domain name restrictions
+
+
+Resources:
+
+   IPv4Record:
+      Type: AWS::Route53::RecordSet
+      Properties:
+         AliasTarget:
+            DNSName:
+               Ref: DistributionDomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+         HostedZoneId:
+            Ref: HostedZoneId
+         Name:
+            Fn::Sub: ${ContentCodename}.assets.${RootDomain}.
+         Type: A
+
+   IPv6Record:
+      Type: AWS::Route53::RecordSet
+      Properties:
+         AliasTarget:
+            DNSName:
+               Ref: DistributionDomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+         HostedZoneId:
+            Ref: HostedZoneId
+         Name:
+            Fn::Sub: ${ContentCodename}.assets.${RootDomain}.
+         Type: AAAA

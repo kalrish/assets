@@ -1,0 +1,48 @@
+---
+
+
+AWSTemplateFormatVersion: 2010-09-09
+
+
+Description: SSL certificate for webfont distribution
+
+
+Parameters:
+
+   ContentCodename:
+      Description: Codename for the type of content published with the distribution.
+      Type: String
+
+   HostedZoneId:
+      Description: ID of the Route 53 hosted zone harboring the webfont distribution domain.
+      Type: AWS::Route53::HostedZone::Id
+
+   RootDomain:
+      Description: Root domain.
+      Type: String
+      AllowedPattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
+      ConstraintDescription: must abide by domain name restrictions
+
+
+Resources:
+
+   Certificate:
+      Type: AWS::CertificateManager::Certificate
+      Properties:
+         DomainName:
+            Fn::Sub: ${ContentCodename}.assets.${RootDomain}
+         DomainValidationOptions:
+            -
+               DomainName:
+                  Fn::Sub: ${ContentCodename}.assets.${RootDomain}
+               HostedZoneId:
+                  Ref: HostedZoneId
+         ValidationMethod: DNS
+
+
+Outputs:
+
+   CertificateArn:
+      Description: ARN of the certificate.
+      Value:
+         Ref: Certificate

@@ -1,0 +1,133 @@
+---
+
+
+AWSTemplateFormatVersion: 2010-09-09
+
+
+Description: Webfont distribution
+
+
+Parameters:
+
+   CertificateArn:
+      Description: ARN of the certificate.
+      Type: String
+
+   CloudFrontPriceClass:
+      Description: Price class of CloudFront distribution.
+      Type: String
+      AllowedValues:
+         - PriceClass_100
+         - PriceClass_200
+         - PriceClass_All
+
+   CloudFrontSecurityPolicy:
+      Description: Name of the CloudFront security policy to apply on HTTPS connections.
+      Type: String
+      AllowedValues:
+         - TLSv1
+         - TLSv1_2016
+         - TLSv1.1_2016
+         - TLSv1.2_2018
+         - TLSv1.2_2019
+         - TLSv1.2_2021
+
+   ContentBucketDomainName:
+      Description: Domain name of the S3 bucket hosting the content to be distributed.
+      Type: String
+
+   ContentCodename:
+      Description: Codename for the type of content published with the distribution.
+      Type: String
+
+   OriginAccessIdentity:
+      Description: ID of the origin access identity that is allowed to access the S3 bucket hosting the content to be distributed.
+      Type: String
+
+   RootDomain:
+      Description: Root domain.
+      Type: String
+      AllowedPattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
+      ConstraintDescription: must abide by domain name restrictions
+
+
+Resources:
+
+   Distribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+         DistributionConfig:
+            Aliases:
+               -
+                  Fn::Sub: ${ContentCodename}.assets.${RootDomain}
+            DefaultCacheBehavior:
+               AllowedMethods:
+                  - GET
+                  - HEAD
+                  - OPTIONS
+               CachedMethods:
+                  - GET
+                  - HEAD
+                  - OPTIONS
+               CachePolicyId:
+                  Fn::GetAtt:
+                     - CachePolicy
+                     - Id
+               Compress: true
+               TargetOriginId: s3
+               ViewerProtocolPolicy: redirect-to-https
+            DefaultRootObject: ''
+            Enabled: true
+            HttpVersion: http2
+            IPV6Enabled: true
+            Origins:
+               -
+                  DomainName:
+                     Ref: ContentBucketDomainName
+                  Id: s3
+                  S3OriginConfig:
+                     OriginAccessIdentity:
+                        Fn::Sub: origin-access-identity/cloudfront/${OriginAccessIdentity}
+            PriceClass:
+               Ref: CloudFrontPriceClass
+            ViewerCertificate:
+               AcmCertificateArn:
+                  Ref: CertificateArn
+               MinimumProtocolVersion:
+                  Ref: CloudFrontSecurityPolicy
+               SslSupportMethod: sni-only
+
+   CachePolicy:
+      Type: AWS::CloudFront::CachePolicy
+      Properties:
+         CachePolicyConfig:
+            Comment:
+               Fn::Sub: Caching of ${ContentCodename}
+            DefaultTTL: 7776000
+            MaxTTL: 31536000
+            MinTTL: 2592000
+            Name:
+               Fn::Sub: assets-${ContentCodename}
+            ParametersInCacheKeyAndForwardedToOrigin:
+               CookiesConfig:
+                  CookieBehavior: none
+               EnableAcceptEncodingBrotli: true
+               EnableAcceptEncodingGzip: true
+               HeadersConfig:
+                  HeaderBehavior: whitelist
+                  Headers:
+                     - Access-Control-Request-Headers
+                     - Access-Control-Request-Method
+                     - Origin
+               QueryStringsConfig:
+                  QueryStringBehavior: none
+
+
+Outputs:
+
+   DistributionDomainName:
+      Description: Domain name of the CloudFront distribution.
+      Value:
+         Fn::GetAtt:
+            - Distribution
+            - DomainName

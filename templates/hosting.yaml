@@ -1,0 +1,107 @@
+---
+
+
+AWSTemplateFormatVersion: 2010-09-09
+
+
+Description: Hosting for webfont distribution
+
+
+Parameters:
+
+   AllowedOrigins:
+      Description: Domains from which webfonts may be requested as per CORS.
+      Type: CommaDelimitedList
+
+   BucketName:
+      Description: Name of the S3 bucket that will host the webfonts.
+      Type: String
+      Default: ''
+
+
+Conditions:
+
+   BucketNamed:
+      Fn::Not:
+         -
+            Fn::Equals:
+               -
+                  Ref: BucketName
+               - ''
+
+
+Resources:
+
+   Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+         AccessControl: Private
+         BucketName:
+            Fn::If:
+               - BucketNamed
+               -
+                  Ref: BucketName
+               -
+                  Ref: AWS::NoValue
+         CorsConfiguration:
+            CorsRules:
+               -
+                  AllowedHeaders:
+                     - '*'
+                  AllowedMethods:
+                     - GET
+                     - HEAD
+                  AllowedOrigins:
+                     Ref: AllowedOrigins
+         PublicAccessBlockConfiguration:
+            BlockPublicAcls: true
+            BlockPublicPolicy: true
+            IgnorePublicAcls: true
+            RestrictPublicBuckets: true
+
+   OriginAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+         CloudFrontOriginAccessIdentityConfig:
+            Comment: webfont distribution
+
+   BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+         Bucket:
+            Ref: Bucket
+         PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+               -
+                  Sid: CloudFront
+                  Principal:
+                     AWS:
+                        -
+                           Fn::Sub: arn:${AWS::Partition}:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}
+                  Action:
+                     - s3:GetObject
+                  Resource:
+                     -
+                        Fn::Sub: ${Bucket.Arn}/*
+                  Effect: Allow
+
+
+Outputs:
+
+   BucketName:
+      Description: Name of the S3 bucket to which to upload webfonts.
+      Value:
+         Ref: Bucket
+
+   BucketDomainName:
+      Description: Domain name of the S3 bucket.
+      Value:
+         Fn::GetAtt:
+            - Bucket
+            - DomainName
+
+   OriginAccessIdentity:
+      Description: ID of the CloudFront origin access identity that is allowed to access the bucket.
+      Value:
+         Ref: OriginAccessIdentity

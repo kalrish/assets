@@ -3,7 +3,9 @@
 template_path: certificate.yaml
 
 stack_tags:
-   Purpose: assets:{{ content_codename }}:serving
+   Purpose: website
+   domain: {{ content_codename }}.assets.{{ root_domain }}
+   role: serving
 
 parameters:
    ContentCodename: {{ content_codename }}

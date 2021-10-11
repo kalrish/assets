@@ -1,0 +1,15 @@
+---
+
+template_path: distribution.yaml
+
+stack_tags:
+   Purpose: assets:{{ content_codename }}:serving
+
+parameters:
+   CertificateArn: !stack_output fonts/certificate.yaml::CertificateArn
+   CloudFrontPriceClass: PriceClass_100
+   CloudFrontSecurityPolicy: TLSv1.2_2021
+   ContentBucketDomainName: !stack_output fonts/hosting.yaml::BucketDomainName
+   ContentCodename: {{ content_codename }}
+   OriginAccessIdentity: !stack_output fonts/hosting.yaml::OriginAccessIdentity
+   RootDomain: {{ root_domain }}

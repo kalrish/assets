@@ -1,0 +1,12 @@
+---
+
+template_path: dns.yaml
+
+stack_tags:
+   Purpose: assets:{{ content_codename }}:serving
+
+parameters:
+   ContentCodename: {{ content_codename }}
+   DistributionDomainName: !stack_output images/distribution.yaml::DistributionDomainName
+   HostedZoneId: {{ hosted_zone_id }}
+   RootDomain: {{ root_domain }}

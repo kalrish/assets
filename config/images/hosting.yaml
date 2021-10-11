@@ -1,0 +1,15 @@
+---
+
+template_path: hosting.yaml
+
+stack_tags:
+   Purpose: assets:{{ content_codename }}:hosting
+
+parameters:
+   AllowedOrigins:
+      - https://www.djsp.de
+      - https://www.djsp.es
+      - https://www.djsp.eu
+      - https://djsp.blog
+      - https://blog.www.djsp.eu
+      - https://flaschenpost.www.djsp.eu

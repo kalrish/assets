@@ -1,0 +1,11 @@
+---
+
+template_path: certificate.yaml
+
+stack_tags:
+   Purpose: assets:{{ content_codename }}:serving
+
+parameters:
+   ContentCodename: {{ content_codename }}
+   HostedZoneId: {{ hosted_zone_id }}
+   RootDomain: {{ root_domain }}

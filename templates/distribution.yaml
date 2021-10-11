@@ -69,11 +69,9 @@ Resources:
                   - GET
                   - HEAD
                   - OPTIONS
-               CachePolicyId:
-                  Fn::GetAtt:
-                     - CachePolicy
-                     - Id
+               CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
                Compress: true
+               OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
                TargetOriginId: s3
                ViewerProtocolPolicy: redirect-to-https
             DefaultRootObject: ''
@@ -96,31 +94,6 @@ Resources:
                MinimumProtocolVersion:
                   Ref: CloudFrontSecurityPolicy
                SslSupportMethod: sni-only
-
-   CachePolicy:
-      Type: AWS::CloudFront::CachePolicy
-      Properties:
-         CachePolicyConfig:
-            Comment:
-               Fn::Sub: Caching of ${ContentCodename}
-            DefaultTTL: 7776000
-            MaxTTL: 31536000
-            MinTTL: 2592000
-            Name:
-               Fn::Sub: assets-${ContentCodename}
-            ParametersInCacheKeyAndForwardedToOrigin:
-               CookiesConfig:
-                  CookieBehavior: none
-               EnableAcceptEncodingBrotli: true
-               EnableAcceptEncodingGzip: true
-               HeadersConfig:
-                  HeaderBehavior: whitelist
-                  Headers:
-                     - Access-Control-Request-Headers
-                     - Access-Control-Request-Method
-                     - Origin
-               QueryStringsConfig:
-                  QueryStringBehavior: none
 
 
 Outputs:

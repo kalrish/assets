@@ -4,7 +4,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 
-Description: DNS records for webfont distribution
+Description: DNS records for asset distribution
 
 
 Parameters:

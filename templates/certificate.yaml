@@ -4,7 +4,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 
-Description: SSL certificate for webfont distribution
+Description: SSL certificate for asset distribution
 
 
 Parameters:
@@ -14,7 +14,7 @@ Parameters:
       Type: String
 
    HostedZoneId:
-      Description: ID of the Route 53 hosted zone harboring the webfont distribution domain.
+      Description: ID of the Route 53 hosted zone associated with the root domain.
       Type: AWS::Route53::HostedZone::Id
 
    RootDomain:

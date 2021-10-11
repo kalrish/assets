@@ -4,7 +4,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 
-Description: Webfont distribution
+Description: CDN for assets
 
 
 Parameters:

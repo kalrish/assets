@@ -4,7 +4,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 
-Description: Hosting for webfont distribution
+Description: Asset hosting
 
 
 Parameters:
@@ -63,7 +63,7 @@ Resources:
       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
       Properties:
          CloudFrontOriginAccessIdentityConfig:
-            Comment: webfont distribution
+            Comment: asset distribution
 
    BucketPolicy:
       Type: AWS::S3::BucketPolicy

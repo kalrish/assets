@@ -10,11 +10,11 @@ Description: Hosting for webfont distribution
 Parameters:
 
    AllowedOrigins:
-      Description: Domains from which webfonts may be requested as per CORS.
+      Description: Domains from which assets may be requested as per CORS.
       Type: CommaDelimitedList
 
    BucketName:
-      Description: Name of the S3 bucket that will host the webfonts.
+      Description: Name of the S3 bucket that will host the assets.
       Type: String
       Default: ''
 
@@ -90,7 +90,7 @@ Resources:
 Outputs:
 
    BucketName:
-      Description: Name of the S3 bucket to which to upload webfonts.
+      Description: Name of the S3 bucket to which to upload assets.
       Value:
          Ref: Bucket
 

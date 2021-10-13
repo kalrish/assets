@@ -38,6 +38,11 @@ Resources:
                HostedZoneId:
                   Ref: HostedZoneId
          ValidationMethod: DNS
+         Tags:
+            -
+               Key: Name
+               Value:
+                  Fn::Sub: assets-${ContentCodename}
 
 
 Outputs:
